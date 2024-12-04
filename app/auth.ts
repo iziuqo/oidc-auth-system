@@ -2,17 +2,6 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id?: string
-      name?: string | null
-      email?: string | null
-      image?: string | null
-    }
-  }
-}
-
 export const {
   handlers: { GET, POST },
   auth,
@@ -22,33 +11,11 @@ export const {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: "openid email profile",
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      },
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
     })
   ],
-  callbacks: {
-    async session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub
-      }
-      return session
-    },
-    authorized({ request, auth }) {
-      const { pathname } = request.nextUrl
-      if (pathname === "/dashboard") return !!auth
-      return true
-    },
-  },
   pages: {
-    signIn: '/auth/signin',
-    signOut: '/auth/signout',
-    error: '/auth/error',
+    signOut: '/auth/signout'
   },
+  debug: true
 })
