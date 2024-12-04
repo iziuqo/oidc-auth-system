@@ -1,30 +1,15 @@
 // app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { DefaultJWT } from "next-auth/jwt"
 
-// Extend session type to include access token
 declare module "next-auth" {
   interface Session {
-    accessToken?: string
     user: {
       id?: string
       name?: string | null
       email?: string | null
       image?: string | null
-      given_name?: string | null
-      family_name?: string | null
-      picture?: string | null
-      locale?: string | null
-      verified_email?: boolean
     }
-  }
-}
-
-// Extend JWT type
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    accessToken?: string
   }
 }
 
@@ -40,7 +25,7 @@ export const {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "openid email profile https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+          scope: "openid email profile",
           prompt: "consent",
           access_type: "offline",
           response_type: "code"
@@ -49,14 +34,7 @@ export const {
     })
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token
-      }
-      return token
-    },
     async session({ session, token }) {
-      session.accessToken = token.accessToken
       if (token.sub) {
         session.user.id = token.sub
       }
@@ -73,9 +51,4 @@ export const {
     signOut: '/auth/signout',
     error: '/auth/error',
   },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  secret: process.env.AUTH_SECRET,
 })
