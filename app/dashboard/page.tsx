@@ -1,8 +1,8 @@
+// app/dashboard/page.tsx
 import { auth } from "../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { User, Mail, Key, ArrowLeft } from "lucide-react"
 
 export default async function Dashboard() {
   const session = await auth()
@@ -24,7 +24,7 @@ export default async function Dashboard() {
             href="/"
             className="inline-flex items-center text-white/80 hover:text-white mb-6 transition duration-200"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <span className="mr-2">←</span>
             Back to Home
           </Link>
 
@@ -54,13 +54,11 @@ export default async function Dashboard() {
               <h2 className="text-xl font-semibold text-white mb-6">Profile Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InfoCard 
-                  icon={<User className="w-5 h-5" />}
                   title="User ID"
                   value={session.user?.id}
                   description="Unique identifier"
                 />
                 <InfoCard 
-                  icon={<Mail className="w-5 h-5" />}
                   title="Email"
                   value={session.user?.email}
                   description="Your Google email"
@@ -84,18 +82,14 @@ export default async function Dashboard() {
   )
 }
 
-function InfoCard({ icon, title, value, description }: { 
-  icon: React.ReactNode,
+function InfoCard({ title, value, description }: { 
   title: string, 
   value?: string | null, 
   description: string 
 }) {
   return (
     <div className="backdrop-blur-md bg-white/5 rounded-xl p-6 border border-white/10">
-      <div className="flex items-center space-x-3 mb-3">
-        <div className="text-white/80">{icon}</div>
-        <h3 className="font-medium text-white">{title}</h3>
-      </div>
+      <h3 className="font-medium text-white mb-3">{title}</h3>
       <p className="text-white/90 font-semibold mb-1">{value || "Not available"}</p>
       <p className="text-sm text-white/60">{description}</p>
     </div>
