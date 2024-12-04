@@ -1,8 +1,8 @@
-// app/dashboard/page.tsx
 import { auth } from "../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { User, Mail, Key, ArrowLeft } from "lucide-react"
 
 export default async function Dashboard() {
   const session = await auth()
@@ -12,68 +12,70 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Header with profile image */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
-            <div className="flex items-center space-x-4">
-              {session.user?.image && (
-                <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white">
-                  <Image
-                    src={session.user.image}
-                    alt={session.user?.name || 'Profile'}
-                    fill
-                    className="object-cover"
-                  />
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.jpg")' }}>
+      {/* Overlay with blur */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      
+      {/* Content */}
+      <div className="relative p-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Back button */}
+          <Link 
+            href="/"
+            className="inline-flex items-center text-white/80 hover:text-white mb-6 transition duration-200"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Home
+          </Link>
+
+          <div className="backdrop-blur-xl bg-white/10 rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600/40 to-blue-800/40 p-8">
+              <div className="flex items-center space-x-6">
+                {session.user?.image && (
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white/20 shadow-xl">
+                    <Image
+                      src={session.user.image}
+                      alt={session.user?.name || 'Profile'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h1 className="text-3xl font-bold text-white mb-2">{session.user?.name}</h1>
+                  <p className="text-white/80">{session.user?.email}</p>
                 </div>
-              )}
-              <div className="text-white">
-                <h1 className="text-2xl font-bold">{session.user?.name}</h1>
-                <p className="opacity-90">{session.user?.email}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* User Information */}
-          <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Profile Information</h2>
-            <div className="grid grid-cols-1 gap-4">
-              <InfoCard 
-                title="User ID" 
-                value={session.user?.id} 
-                description="Unique identifier provided by Google"
-              />
-              <InfoCard 
-                title="Email" 
-                value={session.user?.email} 
-                description="Your Google email address"
-              />
-              <InfoCard 
-                title="Name" 
-                value={session.user?.name}
-                description="Your full name"
-              />
-            </div>
-
-            {/* Technical Details Section */}
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Debug Information</h2>
-              <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                <pre className="text-sm text-gray-700">
-                  {JSON.stringify(session, null, 2)}
-                </pre>
               </div>
             </div>
 
-            {/* Sign Out Link */}
-            <div className="mt-6">
-              <Link 
-                href="/auth/signout"
-                className="block w-full bg-red-500 text-white text-center px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
-              >
-                Sign Out
-              </Link>
+            {/* Profile Information */}
+            <div className="p-8">
+              <h2 className="text-xl font-semibold text-white mb-6">Profile Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoCard 
+                  icon={<User className="w-5 h-5" />}
+                  title="User ID"
+                  value={session.user?.id}
+                  description="Unique identifier"
+                />
+                <InfoCard 
+                  icon={<Mail className="w-5 h-5" />}
+                  title="Email"
+                  value={session.user?.email}
+                  description="Your Google email"
+                />
+              </div>
+
+              {/* Sign Out */}
+              <div className="mt-8">
+                <Link 
+                  href="/auth/signout"
+                  className="inline-flex items-center justify-center w-full bg-red-500/80 hover:bg-red-600/80 text-white rounded-lg px-6 py-3 transition duration-200 backdrop-blur-sm"
+                >
+                  Sign Out
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -82,12 +84,20 @@ export default async function Dashboard() {
   )
 }
 
-function InfoCard({ title, value, description }: { title: string, value?: string | null, description: string }) {
+function InfoCard({ icon, title, value, description }: { 
+  icon: React.ReactNode,
+  title: string, 
+  value?: string | null, 
+  description: string 
+}) {
   return (
-    <div className="bg-gray-50 p-4 rounded-lg">
-      <h3 className="font-medium text-gray-700">{title}</h3>
-      <p className="text-gray-900 font-semibold mt-1">{value || "Not available"}</p>
-      <p className="text-sm text-gray-500 mt-1">{description}</p>
+    <div className="backdrop-blur-md bg-white/5 rounded-xl p-6 border border-white/10">
+      <div className="flex items-center space-x-3 mb-3">
+        <div className="text-white/80">{icon}</div>
+        <h3 className="font-medium text-white">{title}</h3>
+      </div>
+      <p className="text-white/90 font-semibold mb-1">{value || "Not available"}</p>
+      <p className="text-sm text-white/60">{description}</p>
     </div>
   )
 }
