@@ -1,6 +1,17 @@
 // app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import { Session } from "next-auth"
+
+// Define custom session type
+interface CustomSession extends Session {
+  user: {
+    id?: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -22,11 +33,14 @@ export const {
     })
   ],
   callbacks: {
-    async session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub
-      }
-      return session
+    async session({ session, token }): Promise<CustomSession> {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub
+        }
+      } as CustomSession
     },
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
@@ -40,3 +54,6 @@ export const {
     signOut: '/auth/signout'
   }
 })
+
+// Re-export the helper type
+export type { CustomSession }
