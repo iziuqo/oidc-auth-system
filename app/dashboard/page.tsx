@@ -1,7 +1,8 @@
 // app/dashboard/page.tsx
-import { auth, signOut } from "../auth"
+import { auth } from "../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 
 export default async function Dashboard() {
   const session = await auth()
@@ -58,37 +59,21 @@ export default async function Dashboard() {
             {/* Technical Details Section */}
             <div className="mt-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Debug Information</h2>
-              <div className="space-y-4">
-                <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                  <h3 className="font-medium text-gray-700 mb-2">Session Object:</h3>
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-words">
-                    {JSON.stringify(session, null, 2)}
-                  </pre>
-                </div>
-                
-                <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                  <h3 className="font-medium text-gray-700 mb-2">Environment Check:</h3>
-                  <pre className="text-sm text-gray-700">
-                    {JSON.stringify({
-                      hasGoogleId: !!process.env.GOOGLE_CLIENT_ID,
-                      hasGoogleSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-                      hasAuthSecret: !!process.env.AUTH_SECRET,
-                      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
-                      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
-                      nodeEnv: process.env.NODE_ENV
-                    }, null, 2)}
-                  </pre>
-                </div>
+              <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                <pre className="text-sm text-gray-700">
+                  {JSON.stringify(session, null, 2)}
+                </pre>
               </div>
             </div>
 
-            {/* Sign Out Button */}
+            {/* Sign Out Link */}
             <div className="mt-6">
-              <form action={async () => { 'use server'; await signOut() }}>
-                <button className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">
-                  Sign Out
-                </button>
-              </form>
+              <Link 
+                href="/auth/signout"
+                className="block w-full bg-red-500 text-white text-center px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
+              >
+                Sign Out
+              </Link>
             </div>
           </div>
         </div>
