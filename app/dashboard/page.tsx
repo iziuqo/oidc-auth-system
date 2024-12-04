@@ -37,7 +37,7 @@ export default async function Dashboard() {
           {/* User Information */}
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Profile Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <InfoCard 
                 title="User ID" 
                 value={session.user?.id} 
@@ -57,11 +57,28 @@ export default async function Dashboard() {
 
             {/* Technical Details Section */}
             <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Session Details</h2>
-              <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                <pre className="text-sm text-gray-700">
-                  {JSON.stringify(session, null, 2)}
-                </pre>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Debug Information</h2>
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                  <h3 className="font-medium text-gray-700 mb-2">Session Object:</h3>
+                  <pre className="text-sm text-gray-700 whitespace-pre-wrap break-words">
+                    {JSON.stringify(session, null, 2)}
+                  </pre>
+                </div>
+                
+                <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                  <h3 className="font-medium text-gray-700 mb-2">Environment Check:</h3>
+                  <pre className="text-sm text-gray-700">
+                    {JSON.stringify({
+                      hasGoogleId: !!process.env.GOOGLE_CLIENT_ID,
+                      hasGoogleSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+                      hasAuthSecret: !!process.env.AUTH_SECRET,
+                      hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+                      hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+                      nodeEnv: process.env.NODE_ENV
+                    }, null, 2)}
+                  </pre>
+                </div>
               </div>
             </div>
 
