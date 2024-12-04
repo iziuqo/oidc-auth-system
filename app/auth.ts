@@ -1,7 +1,7 @@
 // app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { JWT } from "next-auth/jwt"
+import { DefaultJWT } from "next-auth/jwt"
 
 // Extend session type to include access token
 declare module "next-auth" {
@@ -12,13 +12,19 @@ declare module "next-auth" {
       name?: string | null
       email?: string | null
       image?: string | null
-      // Add additional profile fields
       given_name?: string | null
       family_name?: string | null
       picture?: string | null
       locale?: string | null
       verified_email?: boolean
     }
+  }
+}
+
+// Extend JWT type
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
+    accessToken?: string
   }
 }
 
@@ -44,17 +50,16 @@ export const {
   ],
   callbacks: {
     async jwt({ token, account }) {
-      // Persist the access_token to the token right after signin
       if (account) {
         token.accessToken = account.access_token
-        token.id = token.sub
       }
       return token
     },
-    async session({ session, token }: { session: any; token: JWT }) {
-      // Send properties to the client
+    async session({ session, token }) {
       session.accessToken = token.accessToken
-      session.user.id = token.sub
+      if (token.sub) {
+        session.user.id = token.sub
+      }
       return session
     },
     authorized({ request, auth }) {
