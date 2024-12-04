@@ -32,14 +32,22 @@ export default async function Dashboard() {
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600/40 to-blue-800/40 p-8">
               <div className="flex items-center space-x-6">
-                {session.user?.image && (
-                  <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white/20 shadow-xl">
+                {session.user?.image ? (
+                  <div className="relative w-24 h-24">
                     <Image
                       src={session.user.image}
                       alt={session.user?.name || 'Profile'}
-                      fill
-                      className="object-cover"
+                      width={96}
+                      height={96}
+                      className="rounded-full border-4 border-white/20 shadow-xl object-cover"
+                      priority
                     />
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center border-4 border-white/20 shadow-xl">
+                    <span className="text-3xl text-white">
+                      {session.user?.name?.[0] || '?'}
+                    </span>
                   </div>
                 )}
                 <div>
@@ -47,6 +55,14 @@ export default async function Dashboard() {
                   <p className="text-white/80">{session.user?.email}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Debug Info */}
+            <div className="p-4 bg-black/20">
+              <p className="text-white/80 text-sm">Session Info:</p>
+              <pre className="text-xs text-white/60 mt-1 overflow-x-auto">
+                {JSON.stringify(session, null, 2)}
+              </pre>
             </div>
 
             {/* Profile Information */}
