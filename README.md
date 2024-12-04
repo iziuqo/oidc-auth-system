@@ -2,6 +2,8 @@
 
 A modern OpenID Connect (OIDC) authentication system built with Next.js 14, featuring secure authentication and a sleek glassmorphic UI design.
 
+Built by [Izaias Cavalcanti](https://github.com/iziuqo)
+
 ## Features
 
 - 🔐 OpenID Connect (OIDC) implementation
@@ -124,6 +126,11 @@ This system implements the Authorization Code Flow with PKCE:
 5. System exchanges code for tokens
 6. System verifies tokens and creates session
 7. User is authenticated and can access protected routes
+
+## Author
+
+**Izaias Cavalcanti**
+- GitHub: [@iziuqo](https://github.com/iziuqo)
 
 ## License
 
