@@ -1,42 +1,51 @@
+// app/page.tsx
 import { auth, signIn, signOut } from "./auth"
 import Link from "next/link"
+import { Google } from "lucide-react"
 
 export default async function Home() {
   const session = await auth()
   
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <div className="max-w-md mx-auto">
-            <div className="divide-y divide-gray-200">
-              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                <h1 className="text-3xl font-bold mb-8">Welcome to OIDC Auth System</h1>
-                {session ? (
-                  <div className="space-y-4">
-                    <p>Signed in as {session.user?.email}</p>
-                    <Link 
-                      href="/dashboard"
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                      Go to Dashboard
-                    </Link>
-                    <form action={async () => { 'use server'; await signOut() }}>
-                      <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                        Sign Out
-                      </button>
-                    </form>
-                  </div>
-                ) : (
-                  <form action={async () => { 'use server'; await signIn('google') }}>
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                      Sign In with Google
-                    </button>
-                  </form>
-                )}
-              </div>
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.jpg")' }}>
+      {/* Overlay with blur effect */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      
+      {/* Content */}
+      <div className="relative min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl shadow-2xl border border-white/20">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-white mb-4">Welcome</h1>
+              <p className="text-gray-200">Sign in to access your dashboard</p>
             </div>
+
+            {session ? (
+              <div className="space-y-4">
+                <p className="text-white/90 text-center">
+                  Signed in as {session.user?.email}
+                </p>
+                <Link 
+                  href="/dashboard"
+                  className="block w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg px-4 py-3 text-center font-medium transition duration-200 backdrop-blur-sm"
+                >
+                  Go to Dashboard
+                </Link>
+                <Link 
+                  href="/auth/signout"
+                  className="block w-full bg-red-500/80 hover:bg-red-600/80 text-white rounded-lg px-4 py-3 text-center transition duration-200 backdrop-blur-sm"
+                >
+                  Sign Out
+                </Link>
+              </div>
+            ) : (
+              <form action={async () => { 'use server'; await signIn('google') }}>
+                <button className="w-full bg-white/90 hover:bg-white text-gray-800 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition duration-200">
+                  <Google className="w-5 h-5" />
+                  <span>Continue with Google</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
