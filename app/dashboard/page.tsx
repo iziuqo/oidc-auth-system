@@ -1,5 +1,5 @@
 // app/dashboard/page.tsx
-import { auth } from "../auth"
+import { auth, signOut } from "../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
 
@@ -44,35 +44,20 @@ export default async function Dashboard() {
                 description="Unique identifier provided by Google"
               />
               <InfoCard 
-                title="Email Status" 
-                value={session.user?.verified_email ? "Verified" : "Not Verified"}
-                description="Email verification status"
+                title="Email" 
+                value={session.user?.email} 
+                description="Your Google email address"
               />
               <InfoCard 
-                title="Given Name" 
-                value={session.user?.given_name} 
-                description="First name"
-              />
-              <InfoCard 
-                title="Family Name" 
-                value={session.user?.family_name}
-                description="Last name"
-              />
-              <InfoCard 
-                title="Locale" 
-                value={session.user?.locale}
-                description="User's preferred language/region"
-              />
-              <InfoCard 
-                title="Session Expires" 
-                value="30 days"
-                description="Maximum session duration"
+                title="Name" 
+                value={session.user?.name}
+                description="Your full name"
               />
             </div>
 
             {/* Technical Details Section */}
             <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Technical Details</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Session Details</h2>
               <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
                 <pre className="text-sm text-gray-700">
                   {JSON.stringify(session, null, 2)}
