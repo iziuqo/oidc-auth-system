@@ -1,4 +1,3 @@
-// app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
@@ -39,6 +38,11 @@ export const {
         session.user.role = token.role
       }
       return session
-    }
+    },
+    authorized({ request, auth }) {
+      const { pathname } = request.nextUrl
+      if (pathname === "/auth/dashboard") return !!auth
+      return true
+    },
   }
 })
