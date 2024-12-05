@@ -1,23 +1,24 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { JWT } from "next-auth/jwt"
+import { DefaultSession, Session } from "next-auth"
 
-// Extend the built-in session types
+// Extend next-auth types
 declare module "next-auth" {
   interface Session {
     user: {
       id: string
-      name?: string | null
-      email?: string | null
-      image?: string | null
       role?: string
-    }
+    } & DefaultSession["user"]
+  }
+
+  interface User {
+    role?: string
   }
 }
 
-// Extend the built-in token types
 declare module "next-auth/jwt" {
   interface JWT {
+    sub?: string
     role?: string
   }
 }
@@ -49,14 +50,14 @@ export const {
   callbacks: {
     async jwt({ token, profile }) {
       if (profile) {
-        token.role = profile.role ?? 'user'
+        token.role = "user"
       }
       return token
     },
-    async session({ session, token }) {
-      if (session.user && token.sub) {
+    async session({ session, token }: { session: Session; token: any }) {
+      if (session?.user && token?.sub) {
         session.user.id = token.sub
-        session.user.role = token.role
+        session.user.role = token.role as string | undefined
       }
       return session
     },
