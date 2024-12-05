@@ -1,25 +1,13 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { DefaultSession, Session } from "next-auth"
+import type { DefaultSession } from "next-auth"
 
-// Extend next-auth types
 declare module "next-auth" {
   interface Session {
     user: {
       id: string
       role?: string
     } & DefaultSession["user"]
-  }
-
-  interface User {
-    role?: string
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    sub?: string
-    role?: string
   }
 }
 
@@ -48,16 +36,10 @@ export const {
     error: "/auth/error",
   },
   callbacks: {
-    async jwt({ token, profile }) {
-      if (profile) {
-        token.role = "user"
-      }
-      return token
-    },
-    async session({ session, token }: { session: Session; token: any }) {
-      if (session?.user && token?.sub) {
-        session.user.id = token.sub
-        session.user.role = token.role as string | undefined
+    async session({ session, token }) {
+      if (session?.user) {
+        session.user.id = token.sub ?? ''
+        session.user.role = 'user'
       }
       return session
     },
