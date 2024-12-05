@@ -1,13 +1,12 @@
-// app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { DefaultSession } from "next-auth"
+import type { DefaultSession } from "next-auth"
 
-// Extend the session type
 declare module "next-auth" {
   interface Session {
     user: {
       id: string
+      role?: string
     } & DefaultSession["user"]
   }
 }
@@ -31,20 +30,23 @@ export const {
       }
     })
   ],
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/signout",
+    error: "/auth/error",
+  },
   callbacks: {
     async session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub
+      if (session?.user) {
+        session.user.id = token.sub ?? ''
+        session.user.role = 'user'
       }
       return session
     },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
-    }
-  },
-  pages: {
-    signOut: '/auth/signout'
+    authorized({ request, auth }) {
+      const { pathname } = request.nextUrl
+      if (pathname === "/auth/dashboard") return !!auth
+      return true
+    },
   }
 })

@@ -1,9 +1,9 @@
-// app/auth/signout/page.tsx
 import { signOut } from "../../auth"
+import Link from "next/link"
 
 export default function SignOutPage() {
   return (
-    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.jpg")' }}>
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.png")' }}>
       {/* Overlay with blur */}
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
       
@@ -26,12 +26,12 @@ export default function SignOutPage() {
                 </button>
               </form>
               
-              <a 
+              <Link 
                 href="/dashboard" 
                 className="block w-full bg-white/10 hover:bg-white/20 text-white text-center rounded-lg px-4 py-3 transition duration-200"
               >
                 Cancel
-              </a>
+              </Link>
             </div>
           </div>
         </div>

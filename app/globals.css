@@ -1,3 +1,16 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased text-gray-900 bg-gray-100;
+  }
+}
+
+@layer components {
+  .backdrop-blur-card {
+    @apply backdrop-blur-xl bg-white/10 rounded-2xl shadow-2xl border border-white/20;
+  }
+}
