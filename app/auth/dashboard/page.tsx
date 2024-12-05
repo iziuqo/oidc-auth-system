@@ -1,5 +1,4 @@
-// app/auth/dashboard/page.tsx
-import { auth } from "../../auth"  // Updated import path
+import { auth } from "../../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
