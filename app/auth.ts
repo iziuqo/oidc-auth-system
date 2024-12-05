@@ -1,16 +1,9 @@
 // app/auth.ts
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { DefaultSession } from "next-auth"
-
-// Extend the session type
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string
-    } & DefaultSession["user"]
-  }
-}
+import GitHubProvider from "next-auth/providers/github"
+import AzureADProvider from "next-auth/providers/azure-ad"
+import Auth0Provider from "next-auth/providers/auth0"
 
 export const {
   handlers: { GET, POST },
@@ -29,22 +22,35 @@ export const {
           response_type: "code"
         }
       }
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
+    }),
+    Auth0Provider({
+      clientId: process.env.AUTH0_CLIENT_ID!,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+      issuer: process.env.AUTH0_ISSUER,
     })
   ],
   callbacks: {
+    async jwt({ token, profile }) {
+      if (profile) {
+        token.role = profile.role ?? 'user'
+      }
+      return token
+    },
     async session({ session, token }) {
-      if (token.sub) {
+      if (session?.user) {
         session.user.id = token.sub
+        session.user.role = token.role
       }
       return session
-    },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
     }
-  },
-  pages: {
-    signOut: '/auth/signout'
   }
 })
