@@ -38,6 +38,11 @@ export const {
       issuer: process.env.AUTH0_ISSUER,
     })
   ],
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/signout",
+    error: "/auth/error",
+  },
   callbacks: {
     async jwt({ token, profile }) {
       if (profile) {
