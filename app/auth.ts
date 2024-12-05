@@ -21,15 +21,9 @@ export const {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
     })
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/login",
     signOut: "/auth/signout",
@@ -43,10 +37,17 @@ export const {
       }
       return session
     },
-    authorized({ request, auth }) {
-      const { pathname } = request.nextUrl
-      if (pathname === "/auth/dashboard") return !!auth
-      return true
-    },
+    async redirect({ url, baseUrl }) {
+      // After sign in, redirect to dashboard
+      if (url === baseUrl) {
+        return `${baseUrl}/auth/dashboard`
+      }
+      // If on the same origin, allow the redirect
+      if (url.startsWith(baseUrl)) {
+        return url
+      }
+      // Default redirect to dashboard
+      return `${baseUrl}/auth/dashboard`
+    }
   }
 })
