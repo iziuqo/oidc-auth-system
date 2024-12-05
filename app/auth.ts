@@ -1,5 +1,26 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import { JWT } from "next-auth/jwt"
+
+// Extend the built-in session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role?: string
+    }
+  }
+}
+
+// Extend the built-in token types
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: string
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -33,7 +54,7 @@ export const {
       return token
     },
     async session({ session, token }) {
-      if (session?.user) {
+      if (session.user && token.sub) {
         session.user.id = token.sub
         session.user.role = token.role
       }
