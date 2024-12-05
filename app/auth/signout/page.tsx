@@ -27,7 +27,7 @@ export default function SignOutPage() {
               </form>
               
               <Link 
-                href="/dashboard" 
+                href="/auth/dashboard"
                 className="block w-full bg-white/10 hover:bg-white/20 text-white text-center rounded-lg px-4 py-3 transition duration-200"
               >
                 Cancel
