@@ -1,4 +1,3 @@
-// app/auth/login/page.tsx
 import { auth, signIn } from "../../auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -8,7 +7,7 @@ export default async function LoginPage() {
   
   // Redirect to dashboard if already logged in
   if (session) {
-    redirect("/dashboard")
+    redirect("/auth/dashboard")
   }
 
   return (
@@ -25,7 +24,10 @@ export default async function LoginPage() {
               <p className="text-gray-200">Sign in securely using Google</p>
             </div>
 
-            <form action={async () => { 'use server'; await signIn('google', { redirectTo: '/dashboard' }) }}>
+            <form action={async () => { 
+              'use server'
+              await signIn('google', { redirectTo: '/auth/dashboard' })
+            }}>
               <button className="w-full bg-white hover:bg-gray-50 text-gray-800 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition duration-200">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
