@@ -1,4 +1,3 @@
-// app/dashboard/page.tsx
 import { auth } from "../auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
@@ -12,7 +11,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.jpg")' }}>
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: 'url("/bg-abstract.png")' }}>
       {/* Overlay with blur */}
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
       
@@ -55,14 +54,6 @@ export default async function Dashboard() {
                   <p className="text-white/80">{session.user?.email}</p>
                 </div>
               </div>
-            </div>
-
-            {/* Debug Info */}
-            <div className="p-4 bg-black/20">
-              <p className="text-white/80 text-sm">Session Info:</p>
-              <pre className="text-xs text-white/60 mt-1 overflow-x-auto">
-                {JSON.stringify(session, null, 2)}
-              </pre>
             </div>
 
             {/* Profile Information */}
