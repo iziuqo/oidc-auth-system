@@ -19,35 +19,37 @@ export const {
 } = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      authorization: {
+        params: {
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     })
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/login",
     signOut: "/auth/signout",
     error: "/auth/error",
   },
+  session: {
+    strategy: "jwt"
+  },
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
     async session({ session, token }) {
-      if (session?.user) {
+      if (session.user) {
         session.user.id = token.sub ?? ''
         session.user.role = 'user'
       }
       return session
-    },
-    async redirect({ url, baseUrl }) {
-      // After sign in, redirect to dashboard
-      if (url === baseUrl) {
-        return `${baseUrl}/auth/dashboard`
-      }
-      // If on the same origin, allow the redirect
-      if (url.startsWith(baseUrl)) {
-        return url
-      }
-      // Default redirect to dashboard
-      return `${baseUrl}/auth/dashboard`
     }
   }
 })
