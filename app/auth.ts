@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import type { DefaultSession, JWT, User } from "next-auth"
+import type { DefaultSession } from "next-auth"
 
 declare module "next-auth" {
   interface Session {
@@ -32,21 +32,20 @@ export const config = {
     error: "/auth/error",
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
-      if (user) {
+    async jwt({ token, user }) {
+      if (user?.id) {
         token.id = user.id
       }
       return token
     },
-    async session({ session, token }: { session: any; token: JWT }) {
+    async session({ session, token }) {
       if (session?.user) {
         session.user.id = token.sub ?? ''
         session.user.role = 'user'
       }
       return session
     },
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      // Handle redirect after sign in
+    async redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl)) {
         return url
       } else if (url.startsWith("/")) {
