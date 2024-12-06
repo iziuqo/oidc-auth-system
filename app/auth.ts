@@ -23,19 +23,32 @@ export const {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
       authorization: {
         params: {
-          access_type: "offline",
-          response_type: "code"
+          access_type: "offline"
         }
       }
     })
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   pages: {
     signIn: "/auth/login",
     signOut: "/auth/signout",
     error: "/auth/error",
   },
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    }
   },
   callbacks: {
     async jwt({ token, user }) {
