@@ -16,20 +16,22 @@ export const config = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-      authorization: {
-        params: {
-          access_type: "offline",
-          prompt: "select_account"
-        }
-      }
     })
   ],
+  session: {
+    strategy: "jwt"
+  },
   secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
-  pages: {
-    signIn: "/auth/login",
-    signOut: "/auth/signout",
-    error: "/auth/error",
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    }
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -46,14 +48,10 @@ export const config = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith(baseUrl)) {
-        return url
-      } else if (url.startsWith("/")) {
-        return `${baseUrl}${url}`
-      }
-      return baseUrl
+      return url.startsWith(baseUrl) ? url : baseUrl
     }
-  }
+  },
+  debug: process.env.NODE_ENV === 'development',
 }
 
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth(config)
