@@ -27,7 +27,8 @@ export default async function LoginPage() {
             <form action={async () => { 
               'use server'
               await signIn('google', { 
-                callbackUrl: '/auth/dashboard'
+                redirectTo: '/auth/dashboard',
+                redirect: true
               })
             }}>
               <button className="w-full bg-white hover:bg-gray-50 text-gray-800 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition duration-200">
