@@ -11,19 +11,15 @@ declare module "next-auth" {
   }
 }
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
+export const config = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
       authorization: {
         params: {
-          access_type: "offline"
+          access_type: "offline",
+          prompt: "select_account"
         }
       }
     })
@@ -34,21 +30,6 @@ export const {
     signIn: "/auth/login",
     signOut: "/auth/signout",
     error: "/auth/error",
-  },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: true
-      }
-    }
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -63,6 +44,17 @@ export const {
         session.user.role = 'user'
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Handle redirect after sign in
+      if (url.startsWith(baseUrl)) {
+        return url
+      } else if (url.startsWith("/")) {
+        return `${baseUrl}${url}`
+      }
+      return baseUrl
     }
   }
-})
+}
+
+export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth(config)
