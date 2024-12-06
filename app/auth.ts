@@ -45,12 +45,6 @@ export const config = {
     }
   },
   callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.provider === "google") {
-        return profile?.email_verified ?? false
-      }
-      return true
-    },
     async jwt({ token, user, account }) {
       if (account && user) {
         token.id = user.id
@@ -66,12 +60,10 @@ export const config = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      // Handle redirect after sign in
-      if (url.startsWith("/auth") || url.startsWith("/api")) {
-        const finalUrl = `${baseUrl}${url}`
-        return finalUrl
+      if (url.startsWith(baseUrl)) {
+        return url
       }
-      return url.startsWith(baseUrl) ? url : `${baseUrl}/auth/dashboard`
+      return baseUrl
     }
   }
 }
