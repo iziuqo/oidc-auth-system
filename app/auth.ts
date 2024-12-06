@@ -16,15 +16,26 @@ export const config = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      authorization: {
+        params: {
+          access_type: "offline",
+        }
+      }
     })
   ],
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/signout",
+    error: "/auth/error",
+  },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: `__Secure-next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -34,9 +45,16 @@ export const config = {
     }
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user?.id) {
+    async signIn({ account, profile }) {
+      if (account?.provider === "google") {
+        return profile?.email_verified ?? false
+      }
+      return true
+    },
+    async jwt({ token, user, account }) {
+      if (account && user) {
         token.id = user.id
+        token.accessToken = account.access_token
       }
       return token
     },
@@ -48,10 +66,14 @@ export const config = {
       return session
     },
     async redirect({ url, baseUrl }) {
-      return url.startsWith(baseUrl) ? url : baseUrl
+      // Handle redirect after sign in
+      if (url.startsWith("/auth") || url.startsWith("/api")) {
+        const finalUrl = `${baseUrl}${url}`
+        return finalUrl
+      }
+      return url.startsWith(baseUrl) ? url : `${baseUrl}/auth/dashboard`
     }
-  },
-  debug: process.env.NODE_ENV === 'development',
+  }
 }
 
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth(config)
